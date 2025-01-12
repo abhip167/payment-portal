@@ -1,0 +1,67 @@
+<div class="container">
+  <h1>Payment List</h1>
+
+  <div class="search-bar">
+    <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchQuery" (keyup)="onSearch()" />
+  </div>
+
+  <div class="filter-bar">
+    <input pInputText type="text" placeholder="Filter (e.g., {'payee_payment_status': 'overdue'})" [(ngModel)]="filter" (keyup)="onFilter()"/>
+  </div>
+
+  <p-table [value]="payments" [columns]="cols">
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">{{ col.header }}</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-payment>
+      <tr (click)="showPaymentDetails(payment)" >
+        <td>{{ payment.payee_first_name }} {{ payment.payee_last_name }} </td>
+        <td>{{ payment.payee_due_date | date: 'yyyy-MM-dd' }}</td>
+        <td>{{ payment.due_amount }}</td>
+        <td>{{ payment.discount_percent }}</td>
+        <td>{{ payment.tax_percent }}</td>
+        <td>{{ payment.total_due }}</td>
+        <td>{{ payment.payee_payment_status }}</td>
+        <td>
+          <button pButton type="button" label="View Details" icon="pi pi-info-circle" (click)="showPaymentDetails(payment)"></button>
+          <button pButton type="button" label="Edit" icon="pi pi-pencil" (click)="editPayment(payment)"></button>
+
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [responsive]="true" [style]="{width: '50vw'}">
+    <div *ngIf="selectedPayment">
+      <p><strong>First Name:</strong> {{ selectedPayment.payee_first_name }}</p>
+      <p><strong>Last Name:</strong> {{ selectedPayment.payee_last_name }}</p>
+      <p><strong>Email:</strong> {{ selectedPayment.payee_email }}</p>
+      <p><strong>Phone Number:</strong> {{ selectedPayment.payee_phone_number }}</p>
+      <p><strong>Address:</strong> 
+        {{ selectedPayment.payee_address_line_1 }}, 
+        {{ selectedPayment.payee_address_line_2 ? selectedPayment.payee_address_line_2 + ', ' : '' }}
+        {{ selectedPayment.payee_city }}, 
+        {{ selectedPayment.payee_province_or_state }}, 
+        {{ selectedPayment.payee_country }}, 
+        {{ selectedPayment.payee_postal_code }}
+      </p>
+      <p><strong>Due Date:</strong> {{ selectedPayment.payee_due_date | date: 'yyyy-MM-dd' }}</p>
+      <p><strong>Added Date:</strong> {{ selectedPayment.payee_added_date_utc | date: 'MMM d, y, h:mm a' }}</p>
+      <p><strong>Due Amount:</strong> {{ selectedPayment.due_amount | currency:selectedPayment.currency }}</p>
+
+      <p><strong>Discount Percent:</strong> {{ selectedPayment.discount_percent }} %</p>
+      <p><strong>Tax Percent:</strong> {{ selectedPayment.tax_percent }} %</p>
+      <p><strong>Total Due:</strong> {{ selectedPayment.total_due | currency:selectedPayment.currency }}</p>
+
+      <p><strong>Payment Status:</strong> {{ selectedPayment.payee_payment_status }}</p>
+      <p><strong>Currency:</strong> {{ selectedPayment.currency }}</p>
+      <p *ngIf="selectedPayment.evidence_file_id">
+        <strong>Evidence File:</strong>
+        <button pButton type="button" (click)="downloadEvidence(selectedPayment.id)">Download Evidence File</button>
+      </p>
+    </div>
+  </p-dialog>
+</div>
