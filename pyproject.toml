@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "payment-portal"
+version = "0.1.0"
+description = ""
+authors = ["Abhishek Patel <abhishekpatel167@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+bcrypt = "^4.0.1"
+python-jose = "^3.3.0"
+pydantic= {extras = ["email"], version = "^2.10.5"}
+fastapi = "^0.103.1"
+uvicorn = {extras = ["standard"], version = "^0.34.0"}
+python-multipart = "^0.0.6"
+pymongo = {extras = ["srv"], version = "^4.10.1"}
+orjson = "^3.9.7"
+pydantic-settings = "^2.7.1"
+
+[tool.poetry.group.dev.dependencies]
+types-python-jose = "^3.3.4.7"
+ruff = "^0.0.291"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
