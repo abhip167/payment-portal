@@ -16,6 +16,10 @@ export class PaymentService {
     return this.http.get<any[]>(this.paymentsUrl);
   }
 
+  editPayment(paymentId: string, paymentData: any): Observable<any> {
+    return this.http.put<any>(`${this.paymentsUrl}/${paymentId}`, paymentData);
+  }
+
   downloadEvidence(paymentId: string) {
     const url = `${this.paymentsUrl}/evidence/${paymentId}`; 
     window.open(url);

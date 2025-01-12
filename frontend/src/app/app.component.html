@@ -17,7 +17,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-payment>
-      <tr (click)="showPaymentDetails(payment)" >
+      <tr >
         <td>{{ payment.payee_first_name }} {{ payment.payee_last_name }} </td>
         <td>{{ payment.payee_due_date | date: 'yyyy-MM-dd' }}</td>
         <td>{{ payment.due_amount }}</td>
@@ -27,7 +27,7 @@
         <td>{{ payment.payee_payment_status }}</td>
         <td>
           <button pButton type="button" label="View Details" icon="pi pi-info-circle" (click)="showPaymentDetails(payment)"></button>
-          <button pButton type="button" label="Edit" icon="pi pi-pencil" (click)="editPayment(payment)"></button>
+          <button pButton type="button" label="Edit" icon="pi pi-pencil" (click)="openEditPaymentDialog(payment)"></button>
 
         </td>
       </tr>
@@ -65,3 +65,35 @@
     </div>
   </p-dialog>
 </div>
+
+<p-dialog header="Edit Payment" [(visible)]="editDialog" [modal]="true" [responsive]="true" [style]="{width: '50vw'}">
+  <form *ngIf="selectedPayment" [formGroup]="editForm" (ngSubmit)="editPayment()">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="payee_due_date">Due Date</label>
+        <p-datepicker formControlName="payee_due_date" />
+      </div>
+      <div class="p-field">
+        <label for="due_amount">Due Amount</label>
+        <input id="due_amount" type="number" pInputText formControlName="due_amount" />
+      </div>
+      <!-- <div class="p-field">
+        <label for="payee_payment_status">Payment Status</label>
+        <p-dropdown id="payee_payment_status" appendTo="body" formControlName="payee_payment_status" [options]="statuses" placeholder="Select a status"></p-dropdown>
+      </div> -->
+      
+      <div class="p-field">
+        <label for="payee_payment_status">Mark Status as Complete</label>
+        <p-checkbox id="payee_payment_status" formControlName="payee_payment_status" binary="true"></p-checkbox>
+      </div>
+      <div class="p-field" *ngIf="editForm.get('payee_payment_status')?.value">
+        <label for="evidence_file">Upload Evidence File</label>
+        <input id="evidence_file" type="file" (change)="onFileChange($event)" />
+      </div>
+
+      <div class="p-field">
+        <button pButton type="submit" label="Save" [disabled]="!editForm.valid"></button>
+      </div>
+    </div>
+  </form>
+</p-dialog>
