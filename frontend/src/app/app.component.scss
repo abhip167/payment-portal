@@ -8,3 +8,33 @@
     font-size: small;
     color: red;
 }
+
+.p-field {
+    margin-bottom: 1rem;
+}
+
+.p-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.p-field .error {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 0.5rem;
+}
+
+.p-fluid {
+    display: flex;
+    flex-direction: column;
+}
+
+.p-fluid .p-field {
+    width: 100%;
+}
+
+button[pButton] {
+    margin-top: 1rem;
+    align-self: flex-end;
+}

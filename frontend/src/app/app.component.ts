@@ -10,11 +10,13 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FileUploadModule } from 'primeng/fileupload';
+import { ToastModule } from 'primeng/toast';
 
 import { SubSink } from 'subsink';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { of, switchMap } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -24,8 +26,8 @@ import { of, switchMap } from 'rxjs';
     InputTextModule,
     ButtonModule, FormsModule, DialogModule, ReactiveFormsModule, 
     DropdownModule, DatePickerModule,
-  CheckboxModule, InputNumberModule, FileUploadModule],
-  providers: [PaymentService]
+  CheckboxModule, InputNumberModule, FileUploadModule, ToastModule],
+  providers: [PaymentService, MessageService]
 })
 export class AppComponent implements OnInit, OnDestroy {
   payments: any[] = [];
@@ -58,7 +60,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   constructor(@Inject(PaymentService) private paymentService: PaymentService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private messageService: MessageService
   ) {
     this.cols = [
       { field: 'payee_first_name', header: 'Payee' },
@@ -154,6 +157,9 @@ export class AppComponent implements OnInit, OnDestroy {
         console.log('Updated payment:', data);
         this.editDialog = false;
         this.selectedPayment = null;
+        this.messageService.add({ severity: 'info', summary: 'Success',detail: 'Payment updated successfully', life: 3000 });
+
+        this.searchPayments();
       });
     }
   }
@@ -166,6 +172,19 @@ export class AppComponent implements OnInit, OnDestroy {
     if (file) {
       this.editForm.patchValue({ evidence_file: file });
     }
+  }
+
+  deletePayment(paymentId: string) {
+    this.paymentService.deletePayment(paymentId).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'info', summary: 'Deleted',detail: 'Payment deleted successfully', life: 3000 });
+        this.searchPayments(); // Refresh the list after deletion
+      },
+      error: (error) => {
+        console.error('Error deleting payment:', error);
+        this.messageService.add({ severity: 'error', summary: 'Error',detail: 'Error deleting payment', life: 3000 });
+      }
+    });
   }
 
   ngOnDestroy() {

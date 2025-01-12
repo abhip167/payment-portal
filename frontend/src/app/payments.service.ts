@@ -37,4 +37,8 @@ export class PaymentService {
     formData.append('evidence_file', file);
     return this.http.post<any>(`${this.paymentsUrl}/${paymentId}/evidence`, formData);
   }
+
+  deletePayment(paymentId: string): Observable<any> {
+    return this.http.delete<any>(`${this.paymentsUrl}/${paymentId}`);
+  }
 }

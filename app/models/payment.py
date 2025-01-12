@@ -48,7 +48,7 @@ class Payment(PaymentBase):
     id: str
     payee_payment_status: str = Field(default="pending", pattern=r"^(completed|due_now|overdue|pending)$")
     payee_added_date_utc: datetime
-    evidence_file_id: str = Field(default=None) 
+    evidence_file_id: Optional[str] = Field(default=None) 
     total_due: float = Field(gt=0)
 
     @field_validator('evidence_file_id', mode='before')

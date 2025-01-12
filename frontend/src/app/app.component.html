@@ -22,7 +22,7 @@
       <tr>
         <td>{{ payment.payee_first_name }} {{ payment.payee_last_name }} </td>
         <td>{{ payment.payee_due_date | date: 'yyyy-MM-dd' }}</td>
-        <td>{{ payment.due_amount }}</td>
+        <td>{{ payment.due_amount | currency: payment.currency }}</td>
         <td>{{ payment.discount_percent }}</td>
         <td>{{ payment.tax_percent }}</td>
         <td>{{ payment.total_due }}</td>
@@ -32,6 +32,8 @@
             (click)="showPaymentDetails(payment)"></button>
           <button pButton type="button" class="" label="Edit" icon="pi pi-pencil"
             (click)="openEditPaymentDialog(payment)"></button>
+          <button pButton type="button" class="" label="Delete" icon="pi pi-trash"
+            (click)="deletePayment(payment.id)"></button>
         </td>
       </tr>
     </ng-template>
@@ -94,7 +96,7 @@
 
       <div class="p-field">
         <label for="payee_payment_status">Payment Status</label>
-        <p-dropdown formControlName="payee_payment_status" appendTo="body" optionDisabled="inactive"
+        <p-dropdown formControlName="payee_payment_status" [disabled]="selectedPayment.payee_payment_status === 'completed'" appendTo="body" optionDisabled="inactive"
           [options]="statuses" optionLabel="label" optionValue="value"
           [ngClass]="{'ng-invalid ng-dirty': editForm.get('payee_payment_status')?.invalid}" />
         <div *ngIf="editForm.get('payee_payment_status')?.invalid && editForm.get('payee_payment_status')?.touched" class="error">
@@ -116,3 +118,5 @@
     </div>
   </form>
 </p-dialog>
+
+<p-toast />
