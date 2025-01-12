@@ -1,15 +1,17 @@
-<div class="container">
+
   <h1>Payment List</h1>
-
-  <div class="search-bar">
-    <form [formGroup]="searchForm" (ngSubmit)="searchPayments()">
-
-      <input pInputText type="text" placeholder="Search name or email..." formControlName="search" />
-      <p-dropdown [options]="statuses" placeholder="Select Status" formControlName="filter"></p-dropdown>
-      <button pButton type="submit" label="Search"></button>
-    </form>
+  <div class="search-container">
+    <div class="search-bar">
+      <form [formGroup]="searchForm" (ngSubmit)="searchPayments()">
+        <input pInputText type="text" placeholder="Search name or email..." formControlName="search" />
+        <p-dropdown [options]="statuses" placeholder="Select Status" formControlName="filter"></p-dropdown>
+        <button pButton type="submit" label="Search"></button>
+      </form>
+    </div>
+    <div class="add-payment-button">
+      <button pButton type="button" label="Add Payment" icon="pi pi-plus" (click)="addPayment()"></button>
+    </div>
   </div>
-
 
   <p-table [value]="payments" [columns]="cols">
     <ng-template pTemplate="header" let-columns>
@@ -70,11 +72,11 @@
       </p>
     </div>
   </p-dialog>
-</div>
+
 
 <p-dialog header="Edit Payment" [(visible)]="editDialog" [modal]="true" [responsive]="true" [style]="{width: '50vw'}">
   <form *ngIf="selectedPayment" [formGroup]="editForm" (ngSubmit)="editPayment()">
-    <div class="p-fluid">
+    <div class="fluid">
 
       <div class="p-field">
         <label for="payee_due_date">Due Date</label>
@@ -115,6 +117,95 @@
       <div class="p-field">
         <button pButton type="submit" label="Save" [disabled]="!editForm.valid && editForm.dirty"></button>
       </div>
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog header="Add Payment" [(visible)]="addDialog" [modal]="true" [responsive]="true" [style]="{width: '50vw'}">
+  <form [formGroup]="addForm" (ngSubmit)="onAddSubmit()">
+    <div class="form-section">
+      <h3>Payee Information</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="payee_first_name">First Name</label>
+          <input id="payee_first_name" type="text" pInputText formControlName="payee_first_name" />
+        </div>
+        <div class="form-field">
+          <label for="payee_last_name">Last Name</label>
+          <input id="payee_last_name" type="text" pInputText formControlName="payee_last_name" />
+        </div>
+        <div class="form-field">
+          <label for="payee_email">Email</label>
+          <input id="payee_email" type="email" pInputText formControlName="payee_email" />
+        </div>
+        <div class="form-field">
+          <label for="payee_phone_number">Phone Number</label>
+          <input id="payee_phone_number" type="text" pInputText formControlName="payee_phone_number" />
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <h3>Address</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="payee_address_line_1">Address Line 1</label>
+          <input id="payee_address_line_1" type="text" pInputText formControlName="payee_address_line_1" />
+        </div>
+        <div class="form-field">
+          <label for="payee_address_line_2">Address Line 2</label>
+          <input id="payee_address_line_2" type="text" pInputText formControlName="payee_address_line_2" />
+        </div>
+        <div class="form-field">
+          <label for="payee_city">City</label>
+          <input id="payee_city" type="text" pInputText formControlName="payee_city" />
+        </div>
+        <div class="form-field">
+          <label for="payee_province_or_state">Province/State</label>
+          <input id="payee_province_or_state" type="text" pInputText formControlName="payee_province_or_state" />
+        </div>
+        <div class="form-field">
+          <label for="payee_country">Country</label>
+          <input id="payee_country" type="text" pInputText formControlName="payee_country" />
+        </div>
+        <div class="form-field">
+          <label for="payee_postal_code">Postal Code</label>
+          <input id="payee_postal_code" type="text" pInputText formControlName="payee_postal_code" />
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <h3>Payment Details</h3>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="currency">Currency</label>
+          <input id="currency" type="text" pInputText formControlName="currency" />
+        </div>
+        <div class="form-field">
+          <label for="due_amount">Due Amount</label>
+          <input id="due_amount" type="number" pInputText formControlName="due_amount" />
+        </div>
+        <div class="form-field">
+          <label for="discount_percent">Discount Percent</label>
+          <input id="discount_percent" type="number" pInputText formControlName="discount_percent" />
+        </div>
+        <div class="form-field">
+          <label for="tax_percent">Tax Percent</label>
+          <input id="tax_percent" type="number" pInputText formControlName="tax_percent" />
+        </div>
+        <!-- <div class="form-field">
+          <label for="payee_payment_status">Mark Status as Complete</label>
+          <p-checkbox id="payee_payment_status" formControlName="payee_payment_status" binary="true"></p-checkbox>
+        </div> -->
+      </div>
+      <!-- <div class="form-row" *ngIf="addForm.get('payee_payment_status')?.value">
+        <div class="form-field">
+          <label for="evidence_file">Upload Evidence File</label>
+          <input id="evidence_file" type="file" (change)="onFileChange($event)" />
+        </div>
+      </div> -->
+    </div>
+    <div class="form-section">
+      <button pButton type="submit" label="Save" [disabled]="!addForm.valid"></button>
     </div>
   </form>
 </p-dialog>

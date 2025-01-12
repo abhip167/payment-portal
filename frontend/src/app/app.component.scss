@@ -34,7 +34,42 @@
     width: 100%;
 }
 
+
 button[pButton] {
     margin-top: 1rem;
     align-self: flex-end;
 }
+
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+}
+
+.add-payment-button {
+    margin-left: auto;
+}
+
+// Add payment form 
+// TODO: Use primeFlex instead of custom styles
+.form-section {
+    margin-bottom: 20px;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .form-field {
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+  }

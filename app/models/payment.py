@@ -45,7 +45,7 @@ class PaymentBase(BaseModel):
         return v
 
 class Payment(PaymentBase):
-    id: str
+    id: Optional[str] = Field(default=None)
     payee_payment_status: str = Field(default="pending", pattern=r"^(completed|due_now|overdue|pending)$")
     payee_added_date_utc: datetime
     evidence_file_id: Optional[str] = Field(default=None) 

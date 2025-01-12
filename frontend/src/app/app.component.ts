@@ -18,6 +18,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { of, switchMap } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
+const NOTIFICATION_LIFE = 10000;
+// TODO: Optimise - Instead of calling payments api once again, you can just update the payment in the frontend
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -36,12 +38,14 @@ export class AppComponent implements OnInit, OnDestroy {
   filter: string = '';
   displayDialog: boolean = false;
   editDialog: boolean = false;
+  addDialog: boolean = false;
   selectedPayment: any;
   editForm: FormGroup;
+  addForm: FormGroup;
   searchForm: FormGroup;
   page: number = 1;
   pageSize: number = 10;
-  sortOrder: string = 'asc';
+  sortOrder: string = 'desc';
   statuses: any[] = [
     { label: 'Pending', value: 'pending', inactive: false },
     { label: 'Due Now', value: 'due_now', inactive: false },
@@ -80,6 +84,25 @@ export class AppComponent implements OnInit, OnDestroy {
       evidence_file_id: [null],
       evidence_file: [null]
     }, { validator: this.evidenceFileValidator });
+    
+    this.addForm = this.fb.group({
+      payee_first_name: ['', Validators.required],
+      payee_last_name: ['', Validators.required],
+      payee_email: ['', [Validators.required, Validators.email]],
+      payee_phone_number: ['', Validators.required],
+      payee_address_line_1: ['', Validators.required],
+      payee_address_line_2: [''],
+      payee_city: ['', Validators.required],
+      payee_province_or_state: ['', Validators.required],
+      payee_country: ['', Validators.required],
+      payee_postal_code: ['', Validators.required],
+      payee_due_date: [new Date(), Validators.required],
+      currency: ['USD', Validators.required],
+      due_amount: ['', Validators.required],
+      discount_percent: [20, Validators.required],
+      tax_percent: [13, Validators.required],
+      payee_payment_status: ['pending', Validators.required],
+    });
 
     this.searchForm = this.fb.group({
       search: [''],
@@ -112,6 +135,35 @@ export class AppComponent implements OnInit, OnDestroy {
   showPaymentDetails(payment: any) {
     this.selectedPayment = payment;
     this.displayDialog = true;
+  }
+
+  addPayment() {
+    this.addDialog = true;
+  }
+
+  onAddSubmit() {
+    if (this.addForm.valid) {
+      const newPayment = this.addForm.value;
+      this.subs.sink = this.paymentService.addPayment(newPayment).subscribe({
+        next: data => {
+          this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Payment added successfully', life: 3000 });
+          console.log('New payment:', newPayment);
+          this.addDialog = false;
+          this.searchPayments();
+        },
+        error: error => {
+          const errorResponse = error.error;
+          if (errorResponse.detail) {
+            const errors = errorResponse.detail;
+            errors.forEach((error: any) => {
+              this.messageService.add({ severity: 'error', summary: error.loc[1], detail: error.msg, life: NOTIFICATION_LIFE });
+            });
+          }
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to add payment', life: 3000 });
+          console.error('Error adding payment:', error);
+        }
+      });
+    }
   }
 
   openEditPaymentDialog(payment: any) {

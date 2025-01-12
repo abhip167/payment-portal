@@ -12,12 +12,13 @@ export class PaymentService {
 
   constructor(private http: HttpClient) {}
 
-  getPayments(page: number, pageSize: number, search: string, sortOrder: string, filterStatus: string): Observable<any[]> {
+  getPayments(page: number, pageSize: number, search: string, sortOrder: string = 'desc', filterStatus: string): Observable<any[]> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('page_size', pageSize.toString())
       .set('search', search)
       .set('filter_status', filterStatus)
+      .set('sort_by', 'payee_added_date_utc')
       .set('sort_order', sortOrder);
 
     return this.http.get<any[]>(this.paymentsUrl, { params });
@@ -40,5 +41,9 @@ export class PaymentService {
 
   deletePayment(paymentId: string): Observable<any> {
     return this.http.delete<any>(`${this.paymentsUrl}/${paymentId}`);
+  }
+
+  addPayment(paymentData: any): Observable<any> {
+    return this.http.post<any>(this.paymentsUrl, paymentData);
   }
 }
