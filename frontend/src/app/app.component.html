@@ -6,7 +6,8 @@
   </div>
 
   <div class="filter-bar">
-    <input pInputText type="text" placeholder="Filter (e.g., {'payee_payment_status': 'overdue'})" [(ngModel)]="filter" (keyup)="onFilter()"/>
+    <input pInputText type="text" placeholder="Filter (e.g., {'payee_payment_status': 'overdue'})" [(ngModel)]="filter"
+      (keyup)="onFilter()" />
   </div>
 
   <p-table [value]="payments" [columns]="cols">
@@ -17,7 +18,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-payment>
-      <tr >
+      <tr>
         <td>{{ payment.payee_first_name }} {{ payment.payee_last_name }} </td>
         <td>{{ payment.payee_due_date | date: 'yyyy-MM-dd' }}</td>
         <td>{{ payment.due_amount }}</td>
@@ -25,27 +26,29 @@
         <td>{{ payment.tax_percent }}</td>
         <td>{{ payment.total_due }}</td>
         <td>{{ payment.payee_payment_status }}</td>
-        <td>
-          <button pButton type="button" label="View Details" icon="pi pi-info-circle" (click)="showPaymentDetails(payment)"></button>
-          <button pButton type="button" label="Edit" icon="pi pi-pencil" (click)="openEditPaymentDialog(payment)"></button>
-
+        <td class="action-buttons">
+          <button pButton type="button" label="View Details" icon="pi pi-info-circle"
+            (click)="showPaymentDetails(payment)"></button>
+          <button pButton type="button" class="" label="Edit" icon="pi pi-pencil"
+            (click)="openEditPaymentDialog(payment)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 
-  <p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [responsive]="true" [style]="{width: '50vw'}">
+  <p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [responsive]="true"
+    [style]="{width: '50vw'}">
     <div *ngIf="selectedPayment">
       <p><strong>First Name:</strong> {{ selectedPayment.payee_first_name }}</p>
       <p><strong>Last Name:</strong> {{ selectedPayment.payee_last_name }}</p>
       <p><strong>Email:</strong> {{ selectedPayment.payee_email }}</p>
       <p><strong>Phone Number:</strong> {{ selectedPayment.payee_phone_number }}</p>
-      <p><strong>Address:</strong> 
-        {{ selectedPayment.payee_address_line_1 }}, 
+      <p><strong>Address:</strong>
+        {{ selectedPayment.payee_address_line_1 }},
         {{ selectedPayment.payee_address_line_2 ? selectedPayment.payee_address_line_2 + ', ' : '' }}
-        {{ selectedPayment.payee_city }}, 
-        {{ selectedPayment.payee_province_or_state }}, 
-        {{ selectedPayment.payee_country }}, 
+        {{ selectedPayment.payee_city }},
+        {{ selectedPayment.payee_province_or_state }},
+        {{ selectedPayment.payee_country }},
         {{ selectedPayment.payee_postal_code }}
       </p>
       <p><strong>Due Date:</strong> {{ selectedPayment.payee_due_date | date: 'yyyy-MM-dd' }}</p>
@@ -69,30 +72,45 @@
 <p-dialog header="Edit Payment" [(visible)]="editDialog" [modal]="true" [responsive]="true" [style]="{width: '50vw'}">
   <form *ngIf="selectedPayment" [formGroup]="editForm" (ngSubmit)="editPayment()">
     <div class="p-fluid">
+
       <div class="p-field">
         <label for="payee_due_date">Due Date</label>
-        <p-datepicker formControlName="payee_due_date" />
-      </div>
-      <div class="p-field">
-        <label for="due_amount">Due Amount</label>
-        <input id="due_amount" type="number" pInputText formControlName="due_amount" />
-      </div>
-      <!-- <div class="p-field">
-        <label for="payee_payment_status">Payment Status</label>
-        <p-dropdown id="payee_payment_status" appendTo="body" formControlName="payee_payment_status" [options]="statuses" placeholder="Select a status"></p-dropdown>
-      </div> -->
-      
-      <div class="p-field">
-        <label for="payee_payment_status">Mark Status as Complete</label>
-        <p-checkbox id="payee_payment_status" formControlName="payee_payment_status" binary="true"></p-checkbox>
-      </div>
-      <div class="p-field" *ngIf="editForm.get('payee_payment_status')?.value">
-        <label for="evidence_file">Upload Evidence File</label>
-        <input id="evidence_file" type="file" (change)="onFileChange($event)" />
+        <p-datepicker formControlName="payee_due_date" appendTo="body" dateFormat="yy-mm-dd"
+          [ngClass]="{'ng-invalid ng-dirty': editForm.get('payee_due_date')?.invalid}" />
+        <div *ngIf="editForm.get('payee_due_date')?.invalid && editForm.get('payee_due_date')?.touched" class="error">
+          Due Date is required.
+        </div>
       </div>
 
       <div class="p-field">
-        <button pButton type="submit" label="Save" [disabled]="!editForm.valid"></button>
+        <label for="due_amount">Due Amount</label>
+        <p-inputnumber formControlName="due_amount" mode="currency" currency="USD" locale="en-US"
+          [ngClass]="{'ng-invalid ng-dirty': editForm.get('due_amount')?.invalid}" />
+        <div *ngIf="editForm.get('due_amount')?.invalid && editForm.get('due_amount')?.touched" class="error">
+          Due Amount is required.
+        </div>
+      </div>
+
+      <div class="p-field">
+        <label for="payee_payment_status">Payment Status</label>
+        <p-dropdown formControlName="payee_payment_status" appendTo="body" optionDisabled="inactive"
+          [options]="statuses" optionLabel="label" optionValue="value"
+          [ngClass]="{'ng-invalid ng-dirty': editForm.get('payee_payment_status')?.invalid}" />
+        <div *ngIf="editForm.get('payee_payment_status')?.invalid && editForm.get('payee_payment_status')?.touched" class="error">
+          Payment Status is required.
+        </div>
+      </div>
+
+      <div class="p-field" *ngIf="editForm.get('payee_payment_status')?.value === 'completed'">
+        <label for="evidence_file">Upload Evidence File</label>
+        <input id="evidence_file" type="file" (change)="onFileChange($event)" />
+        <div *ngIf="editForm.errors?.['evidenceFileRequired']" class="error">
+          Evidence File is required when payment status is completed.
+        </div>
+      </div>
+
+      <div class="p-field">
+        <button pButton type="submit" label="Save" [disabled]="!editForm.valid && editForm.dirty"></button>
       </div>
     </div>
   </form>

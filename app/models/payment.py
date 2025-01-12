@@ -56,7 +56,7 @@ class Payment(PaymentBase):
          return convert_object_id_to_str(v)
 
 class PaymentUpdate(BaseModel):
-    payee_due_date: Optional[date] = Field(None)
+    payee_due_date: Optional[datetime] = Field(None)
     evidence_file_id: Optional[str] = Field(None)
     due_amount: Optional[float] = Field(None, gt=0)
     payee_payment_status: Optional[str] = Field(None, pattern=r"^(completed|due_now|overdue|pending)$")

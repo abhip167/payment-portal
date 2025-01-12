@@ -71,7 +71,7 @@ def update_payment(
     payment_update: PaymentUpdate = Body(...)
 ) -> Payment:
     
-    if payment_update.payee_payment_status == "completed" and not "evidence_file_id" in payment_update:
+    if payment_update.payee_payment_status == "completed" and not payment_update.evidence_file_id:
         raise HTTPException(status_code=400, detail="Evidence file is required for 'completed' status")
     
     payments_collection = database["payments"]
@@ -161,7 +161,7 @@ def upload_evidence(payment_id: str, evidence_file: UploadFile = File(...)):
         fs = GridFS(database) 
         file_id = fs.put(evidence_file.file, filename=evidence_file.filename)
 
-        payment["evidence_file_id"] = file_id
+        payment["evidence_file_id"] = str(file_id)
         payments_collection.update_one({"_id": ObjectId(payment_id)}, {"$set": payment})
 
         return UploadEvidenceResponse(evidence_file_id= file_id,message="Evidence uploaded successfully.")
@@ -169,7 +169,7 @@ def upload_evidence(payment_id: str, evidence_file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading evidence: {str(e)}") 
 
-@router.get("/evidence/{payment_id}")
+@router.get("/{payment_id}/evidence")
 def download_evidence(payment_id: str):
   
     try:
@@ -184,7 +184,7 @@ def download_evidence(payment_id: str):
 
         fs = GridFS(database)
         file_id = payment["evidence_file_id"]
-        file_data = fs.get(file_id) 
+        file_data = fs.get(ObjectId(file_id)) 
 
           # Stream the file data directly from GridFS
         def generate_stream():
@@ -204,7 +204,10 @@ def download_evidence(payment_id: str):
 
 def update_payment_status(payment: Payment) -> Payment:
     today = datetime.today()
-    if payment.payee_due_date == today:
+    if payment.payee_payment_status == "completed":
+       return payment
+    
+    elif payment.payee_due_date == today:
         payment.payee_payment_status = "due_now"
     elif payment.payee_due_date < today:
         payment.payee_payment_status = "overdue"

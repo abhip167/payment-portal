@@ -8,7 +8,7 @@ import { environment } from '../../environment';
   providedIn: 'root'
 })
 export class PaymentService {
-  private paymentsUrl = `${environment.apiUrl}/payments`;
+  public paymentsUrl = `${environment.apiUrl}/payments`;
 
   constructor(private http: HttpClient) {}
 
@@ -21,7 +21,13 @@ export class PaymentService {
   }
 
   downloadEvidence(paymentId: string) {
-    const url = `${this.paymentsUrl}/evidence/${paymentId}`; 
+    const url = `${this.paymentsUrl}/${paymentId}/evidence`; 
     window.open(url);
+  }
+
+  uploadEvidence(paymentId: string, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('evidence_file', file);
+    return this.http.post<any>(`${this.paymentsUrl}/${paymentId}/evidence`, formData);
   }
 }
