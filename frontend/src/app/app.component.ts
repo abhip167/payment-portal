@@ -11,8 +11,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FileUploadModule } from 'primeng/fileupload';
 
-
-
 import { SubSink } from 'subsink';
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -38,6 +36,10 @@ export class AppComponent implements OnInit, OnDestroy {
   editDialog: boolean = false;
   selectedPayment: any;
   editForm: FormGroup;
+  searchForm: FormGroup;
+  page: number = 1;
+  pageSize: number = 10;
+  sortOrder: string = 'asc';
   statuses: any[] = [
     { label: 'Pending', value: 'pending', inactive: false },
     { label: 'Due Now', value: 'due_now', inactive: false },
@@ -75,11 +77,22 @@ export class AppComponent implements OnInit, OnDestroy {
       evidence_file_id: [null],
       evidence_file: [null]
     }, { validator: this.evidenceFileValidator });
+
+    this.searchForm = this.fb.group({
+      search: [''],
+      filter: ['']
+    });
   }
 
   
   ngOnInit() {
-    this.subs.sink = this.paymentService.getPayments().subscribe(data => {
+    this.searchPayments();
+  }
+
+  searchPayments() {
+    const search = this.searchForm.get('search')?.value;
+    const filter = this.searchForm.get('filter')?.value;
+    this.paymentService.getPayments(this.page, this.pageSize, search, this.sortOrder, filter).subscribe(data => {
       this.payments = data;
     });
   }
@@ -91,14 +104,6 @@ export class AppComponent implements OnInit, OnDestroy {
       return { 'evidenceFileRequired': true };
     }
     return null;
-  }
-
-  onSearch() {
-    // Implement search logic here
-  }
-
-  onFilter() {
-    // Implement filter logic here
   }
 
   showPaymentDetails(payment: any) {

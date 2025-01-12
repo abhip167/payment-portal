@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environment';
@@ -12,8 +12,15 @@ export class PaymentService {
 
   constructor(private http: HttpClient) {}
 
-  getPayments(): Observable<any[]> {
-    return this.http.get<any[]>(this.paymentsUrl);
+  getPayments(page: number, pageSize: number, search: string, sortOrder: string, filterStatus: string): Observable<any[]> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('page_size', pageSize.toString())
+      .set('search', search)
+      .set('filter_status', filterStatus)
+      .set('sort_order', sortOrder);
+
+    return this.http.get<any[]>(this.paymentsUrl, { params });
   }
 
   editPayment(paymentId: string, paymentData: any): Observable<any> {

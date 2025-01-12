@@ -2,13 +2,14 @@
   <h1>Payment List</h1>
 
   <div class="search-bar">
-    <input pInputText type="text" placeholder="Search..." [(ngModel)]="searchQuery" (keyup)="onSearch()" />
+    <form [formGroup]="searchForm" (ngSubmit)="searchPayments()">
+
+      <input pInputText type="text" placeholder="Search name or email..." formControlName="search" />
+      <p-dropdown [options]="statuses" placeholder="Select Status" formControlName="filter"></p-dropdown>
+      <button pButton type="submit" label="Search"></button>
+    </form>
   </div>
 
-  <div class="filter-bar">
-    <input pInputText type="text" placeholder="Filter (e.g., {'payee_payment_status': 'overdue'})" [(ngModel)]="filter"
-      (keyup)="onFilter()" />
-  </div>
 
   <p-table [value]="payments" [columns]="cols">
     <ng-template pTemplate="header" let-columns>
