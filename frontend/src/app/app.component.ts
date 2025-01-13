@@ -11,6 +11,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ToastModule } from 'primeng/toast';
+import { InputMaskModule } from 'primeng/inputmask';
 
 import { SubSink } from 'subsink';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -24,11 +25,11 @@ const NOTIFICATION_LIFE = 10000;
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [TableModule, CommonModule, 
+  imports: [TableModule, CommonModule,
     InputTextModule,
-    ButtonModule, FormsModule, DialogModule, ReactiveFormsModule, 
+    ButtonModule, FormsModule, DialogModule, ReactiveFormsModule,
     DropdownModule, DatePickerModule,
-  CheckboxModule, InputNumberModule, FileUploadModule, ToastModule],
+    CheckboxModule, InputNumberModule, FileUploadModule, ToastModule, InputMaskModule],
   providers: [PaymentService, MessageService]
 })
 export class AppComponent implements OnInit, OnDestroy {
@@ -84,7 +85,7 @@ export class AppComponent implements OnInit, OnDestroy {
       evidence_file_id: [null],
       evidence_file: [null]
     }, { validator: this.evidenceFileValidator });
-    
+
     this.addForm = this.fb.group({
       payee_first_name: ['', Validators.required],
       payee_last_name: ['', Validators.required],
@@ -110,7 +111,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+
   ngOnInit() {
     this.searchPayments();
   }
@@ -179,19 +180,19 @@ export class AppComponent implements OnInit, OnDestroy {
   editPayment() {
     if (this.editForm.valid) {
       const formValues = this.editForm.value;
-  
+
       const uploadEvidence$ = formValues.evidence_file
         ? this.paymentService.uploadEvidence(this.selectedPayment.id, formValues.evidence_file).pipe(
-            switchMap(data => {
-              if (data?.evidence_file_id) {
-                this.editForm.patchValue({ evidence_file_id: data.evidence_file_id });
-              }
-              console.log('Uploaded evidence:', data);
-              return of(data);
-            })
-          )
+          switchMap(data => {
+            if (data?.evidence_file_id) {
+              this.editForm.patchValue({ evidence_file_id: data.evidence_file_id });
+            }
+            console.log('Uploaded evidence:', data);
+            return of(data);
+          })
+        )
         : of(null);
-  
+
       this.subs.sink = uploadEvidence$.pipe(
         switchMap((data) => {
           const editFormValues = this.editForm.value;
@@ -202,14 +203,14 @@ export class AppComponent implements OnInit, OnDestroy {
             payee_payment_status: editFormValues.payee_payment_status,
             evidence_file_id: editFormValues.evidence_file_id
           }
-  
+
           return this.paymentService.editPayment(this.selectedPayment.id, updatedPayment);
         })
       ).subscribe(data => {
         console.log('Updated payment:', data);
         this.editDialog = false;
         this.selectedPayment = null;
-        this.messageService.add({ severity: 'info', summary: 'Success',detail: 'Payment updated successfully', life: 3000 });
+        this.messageService.add({ severity: 'info', summary: 'Success', detail: 'Payment updated successfully', life: 3000 });
 
         this.searchPayments();
       });
@@ -229,12 +230,12 @@ export class AppComponent implements OnInit, OnDestroy {
   deletePayment(paymentId: string) {
     this.paymentService.deletePayment(paymentId).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'info', summary: 'Deleted',detail: 'Payment deleted successfully', life: 3000 });
+        this.messageService.add({ severity: 'info', summary: 'Deleted', detail: 'Payment deleted successfully', life: 3000 });
         this.searchPayments(); // Refresh the list after deletion
       },
       error: (error) => {
         console.error('Error deleting payment:', error);
-        this.messageService.add({ severity: 'error', summary: 'Error',detail: 'Error deleting payment', life: 3000 });
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error deleting payment', life: 3000 });
       }
     });
   }

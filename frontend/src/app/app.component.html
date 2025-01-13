@@ -1,77 +1,76 @@
-
-  <h1>Payment List</h1>
-  <div class="search-container">
-    <div class="search-bar">
-      <form [formGroup]="searchForm" (ngSubmit)="searchPayments()">
-        <input pInputText type="text" placeholder="Search name or email..." formControlName="search" />
-        <p-dropdown [options]="statuses" placeholder="Select Status" formControlName="filter"></p-dropdown>
-        <button pButton type="submit" label="Search"></button>
-      </form>
-    </div>
-    <div class="add-payment-button">
-      <button pButton type="button" label="Add Payment" icon="pi pi-plus" (click)="addPayment()"></button>
-    </div>
+<h1>Payment List</h1>
+<div class="search-container">
+  <div class="search-bar">
+    <form [formGroup]="searchForm" (ngSubmit)="searchPayments()">
+      <input pInputText type="text" placeholder="Search name or email..." formControlName="search" />
+      <p-dropdown [options]="statuses" placeholder="Select Status" formControlName="filter"></p-dropdown>
+      <button pButton type="submit" label="Search"></button>
+    </form>
   </div>
+  <div class="add-payment-button">
+    <button pButton type="button" label="Add Payment" icon="pi pi-plus" (click)="addPayment()"></button>
+  </div>
+</div>
 
-  <p-table [value]="payments" [columns]="cols">
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">{{ col.header }}</th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-payment>
-      <tr>
-        <td>{{ payment.payee_first_name }} {{ payment.payee_last_name }} </td>
-        <td>{{ payment.payee_due_date | date: 'yyyy-MM-dd' }}</td>
-        <td>{{ payment.due_amount | currency: payment.currency }}</td>
-        <td>{{ payment.discount_percent }}</td>
-        <td>{{ payment.tax_percent }}</td>
-        <td>{{ payment.total_due }}</td>
-        <td>{{ payment.payee_payment_status }}</td>
-        <td class="action-buttons">
-          <button pButton type="button" label="View Details" icon="pi pi-info-circle"
-            (click)="showPaymentDetails(payment)"></button>
-          <button pButton type="button" class="" label="Edit" icon="pi pi-pencil"
-            (click)="openEditPaymentDialog(payment)"></button>
-          <button pButton type="button" class="" label="Delete" icon="pi pi-trash"
-            (click)="deletePayment(payment.id)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+<p-table [value]="payments" [columns]="cols">
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns">{{ col.header }}</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-payment>
+    <tr>
+      <td>{{ payment.payee_first_name }} {{ payment.payee_last_name }} </td>
+      <td>{{ payment.payee_due_date | date: 'yyyy-MM-dd' }}</td>
+      <td>{{ payment.due_amount | currency: payment.currency }}</td>
+      <td>{{ payment.discount_percent }}</td>
+      <td>{{ payment.tax_percent }}</td>
+      <td>{{ payment.total_due }}</td>
+      <td>{{ payment.payee_payment_status }}</td>
+      <td class="action-buttons">
+        <button pButton type="button" label="View Details" icon="pi pi-info-circle"
+          (click)="showPaymentDetails(payment)"></button>
+        <button pButton type="button" class="" label="Edit" icon="pi pi-pencil"
+          (click)="openEditPaymentDialog(payment)"></button>
+        <button pButton type="button" class="" label="Delete" icon="pi pi-trash"
+          (click)="deletePayment(payment.id)"></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
 
-  <p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [responsive]="true"
-    [style]="{width: '50vw'}">
-    <div *ngIf="selectedPayment">
-      <p><strong>First Name:</strong> {{ selectedPayment.payee_first_name }}</p>
-      <p><strong>Last Name:</strong> {{ selectedPayment.payee_last_name }}</p>
-      <p><strong>Email:</strong> {{ selectedPayment.payee_email }}</p>
-      <p><strong>Phone Number:</strong> {{ selectedPayment.payee_phone_number }}</p>
-      <p><strong>Address:</strong>
-        {{ selectedPayment.payee_address_line_1 }},
-        {{ selectedPayment.payee_address_line_2 ? selectedPayment.payee_address_line_2 + ', ' : '' }}
-        {{ selectedPayment.payee_city }},
-        {{ selectedPayment.payee_province_or_state }},
-        {{ selectedPayment.payee_country }},
-        {{ selectedPayment.payee_postal_code }}
-      </p>
-      <p><strong>Due Date:</strong> {{ selectedPayment.payee_due_date | date: 'yyyy-MM-dd' }}</p>
-      <p><strong>Added Date:</strong> {{ selectedPayment.payee_added_date_utc | date: 'MMM d, y, h:mm a' }}</p>
-      <p><strong>Due Amount:</strong> {{ selectedPayment.due_amount | currency:selectedPayment.currency }}</p>
+<p-dialog header="Payment Details" [(visible)]="displayDialog" [modal]="true" [responsive]="true"
+  [style]="{width: '50vw'}">
+  <div *ngIf="selectedPayment">
+    <p><strong>First Name:</strong> {{ selectedPayment.payee_first_name }}</p>
+    <p><strong>Last Name:</strong> {{ selectedPayment.payee_last_name }}</p>
+    <p><strong>Email:</strong> {{ selectedPayment.payee_email }}</p>
+    <p><strong>Phone Number:</strong> {{ selectedPayment.payee_phone_number }}</p>
+    <p><strong>Address:</strong>
+      {{ selectedPayment.payee_address_line_1 }},
+      {{ selectedPayment.payee_address_line_2 ? selectedPayment.payee_address_line_2 + ', ' : '' }}
+      {{ selectedPayment.payee_city }},
+      {{ selectedPayment.payee_province_or_state }},
+      {{ selectedPayment.payee_country }},
+      {{ selectedPayment.payee_postal_code }}
+    </p>
+    <p><strong>Due Date:</strong> {{ selectedPayment.payee_due_date | date: 'yyyy-MM-dd' }}</p>
+    <p><strong>Added Date:</strong> {{ selectedPayment.payee_added_date_utc | date: 'MMM d, y, h:mm a' }}</p>
+    <p><strong>Due Amount:</strong> {{ selectedPayment.due_amount | currency:selectedPayment.currency }}</p>
 
-      <p><strong>Discount Percent:</strong> {{ selectedPayment.discount_percent }} %</p>
-      <p><strong>Tax Percent:</strong> {{ selectedPayment.tax_percent }} %</p>
-      <p><strong>Total Due:</strong> {{ selectedPayment.total_due | currency:selectedPayment.currency }}</p>
+    <p><strong>Discount Percent:</strong> {{ selectedPayment.discount_percent }} %</p>
+    <p><strong>Tax Percent:</strong> {{ selectedPayment.tax_percent }} %</p>
+    <p><strong>Total Due:</strong> {{ selectedPayment.total_due | currency:selectedPayment.currency }}</p>
 
-      <p><strong>Payment Status:</strong> {{ selectedPayment.payee_payment_status }}</p>
-      <p><strong>Currency:</strong> {{ selectedPayment.currency }}</p>
-      <p *ngIf="selectedPayment.evidence_file_id">
-        <strong>Evidence File:</strong>
-        <button pButton type="button" (click)="downloadEvidence(selectedPayment.id)">Download Evidence File</button>
-      </p>
-    </div>
-  </p-dialog>
+    <p><strong>Payment Status:</strong> {{ selectedPayment.payee_payment_status }}</p>
+    <p><strong>Currency:</strong> {{ selectedPayment.currency }}</p>
+    <p *ngIf="selectedPayment.evidence_file_id">
+      <strong>Evidence File:</strong>
+      <button pButton type="button" (click)="downloadEvidence(selectedPayment.id)">Download Evidence File</button>
+    </p>
+  </div>
+</p-dialog>
 
 
 <p-dialog header="Edit Payment" [(visible)]="editDialog" [modal]="true" [responsive]="true" [style]="{width: '50vw'}">
@@ -98,10 +97,12 @@
 
       <div class="p-field">
         <label for="payee_payment_status">Payment Status</label>
-        <p-dropdown formControlName="payee_payment_status" [disabled]="selectedPayment.payee_payment_status === 'completed'" appendTo="body" optionDisabled="inactive"
+        <p-dropdown formControlName="payee_payment_status"
+          [disabled]="selectedPayment.payee_payment_status === 'completed'" appendTo="body" optionDisabled="inactive"
           [options]="statuses" optionLabel="label" optionValue="value"
           [ngClass]="{'ng-invalid ng-dirty': editForm.get('payee_payment_status')?.invalid}" />
-        <div *ngIf="editForm.get('payee_payment_status')?.invalid && editForm.get('payee_payment_status')?.touched" class="error">
+        <div *ngIf="editForm.get('payee_payment_status')?.invalid && editForm.get('payee_payment_status')?.touched"
+          class="error">
           Payment Status is required.
         </div>
       </div>
@@ -140,7 +141,7 @@
         </div>
         <div class="form-field">
           <label for="payee_phone_number">Phone Number</label>
-          <input id="payee_phone_number" type="text" pInputText formControlName="payee_phone_number" />
+            <p-inputMask id="payee_phone_number" mask="+9 (999) 999-9999" formControlName="payee_phone_number"></p-inputMask>
         </div>
       </div>
     </div>
@@ -182,15 +183,16 @@
         </div>
         <div class="form-field">
           <label for="due_amount">Due Amount</label>
-          <input id="due_amount" type="number" pInputText formControlName="due_amount" />
+          <p-inputnumber id="due_amount" mode="currency" [currency]="addForm.value.currency" locale="en-US"
+            formControlName="due_amount" />
         </div>
         <div class="form-field">
           <label for="discount_percent">Discount Percent</label>
-          <input id="discount_percent" type="number" pInputText formControlName="discount_percent" />
+          <p-inputnumber id="discount_percent" prefix="%" formControlName="discount_percent" />
         </div>
         <div class="form-field">
           <label for="tax_percent">Tax Percent</label>
-          <input id="tax_percent" type="number" pInputText formControlName="tax_percent" />
+          <p-input-number id="tax_percent" prefix="%" formControlName="tax_percent" />
         </div>
         <!-- <div class="form-field">
           <label for="payee_payment_status">Mark Status as Complete</label>
